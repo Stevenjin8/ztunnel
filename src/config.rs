@@ -326,9 +326,9 @@ pub struct SocketConfig {
 impl Default for SocketConfig {
     fn default() -> Self {
         Self {
-            keepalive_time: Duration::from_secs(180),
-            keepalive_interval: Duration::from_secs(180),
-            keepalive_retries: 9,
+            keepalive_time: Duration::from_secs(60),
+            keepalive_interval: Duration::from_secs(5),
+            keepalive_retries: 3,
             keepalive_enabled: true,
             // Might be a good idea but for now we haven't proven this out enough.
             user_timeout_enabled: false,
