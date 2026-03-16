@@ -30,7 +30,7 @@ use std::task::{Context, Poll};
 use tokio::io::{AsyncRead, AsyncWrite};
 use tokio::sync::oneshot;
 use tokio::sync::watch::Receiver;
-use tracing::{Instrument, debug, error, trace, warn};
+use tracing::{debug, error, info, trace, warn, Instrument};
 
 #[derive(Debug, Clone)]
 // H2ConnectClient is a wrapper abstracting h2
@@ -228,6 +228,8 @@ where
             }
         }
     }
+    // Create a window where this race can happen
+    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     // Signal to the ping_pong it should also stop.
     dropped.store(true, Ordering::Relaxed);
 }

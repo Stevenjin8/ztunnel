@@ -70,6 +70,8 @@ pub async fn run_with_drain<F, O>(
             let _ = trigger_force_shutdown.send(());
 
             info!(component, "shutdown complete");
+            // We need to wait some time, otherwise the ping task get cancelled
+            tokio::time::sleep(Duration::from_secs(5)).await;
             drop(res);
         }
     };
