@@ -44,18 +44,16 @@ SHA="$(git rev-parse --verify HEAD)"
 BINARY_PREFIX=${BINARY_PREFIX:-"ztunnel"}
 RELEASE_NAME="${BINARY_PREFIX}-${SHA}-${ARCH}"
 ls -lh "${WD}/../out/rust/release/ztunnel"
-DEST="${DEST:-gs://istio-build/ztunnel}"
+DEST="${DEST:-s3://istio-build/ztunnel}"
 if [[ "$CI" == "" && "$DEST" == "gs://istio-build/ztunnel" ]]; then
   echo "Outside of CI, DEST must be explicitly set"
   exit 1
 fi
-gsutil cp "${WD}/../out/rust/release/ztunnel" "${DEST}/${RELEASE_NAME}"
 
-R2_DEST="${DEST/gs:\/\//s3:\/\/}"
 ENDPOINT=$(echo "${CF_CREDENTIALS}" | jq -r '.endpoint')
 AWS_ACCESS_KEY_ID=$(echo "${CF_CREDENTIALS}" | jq -r '.access_key') \
     AWS_SECRET_ACCESS_KEY=$(echo "${CF_CREDENTIALS}" | jq -r '.secret_key') \
     AWS_SESSION_TOKEN=$(echo "${CF_CREDENTIALS}" | jq -r '.session_token') \
     aws s3 cp "${WD}/../out/rust/release/ztunnel" \
-    "${R2_DEST}/${RELEASE_NAME}" \
+    "${DEST}/${RELEASE_NAME}" \
     --endpoint-url "${ENDPOINT}"
